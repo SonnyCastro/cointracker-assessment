@@ -1,0 +1,26 @@
+[
+  {
+    "id": "c0800fe8-5171-4fda-9dee-4dce9bd781e1",
+    "address": "3E8ociqZa9mZUSwGdSmAEMAoAxBK3FNDcd",
+    "name": "Coinbase",
+    "iconURL": "https://coin-tracker-public.s3.us-west-1.amazonaws.com/crypto-icons/icons/coinbase-wallet.svg"
+  },
+  {
+    "id": "2e5e6892-821a-4d18-9b37-d17e8385092b",
+    "address": "bc1q0sg9rdst255gtldsmcf8rk0764avqy2h2ksqs5",
+    "name": "Kraken",
+    "iconURL": "https://coin-tracker-public.s3.us-west-1.amazonaws.com/crypto-icons/icons/kraken.svg"
+  },
+  {
+    "id": "5455bc71-32f0-4c61-b025-d1daad1286e5",
+    "address": "bc1qm34lsc65zpw79lxes69zkqmk6ee3ewf0j77s3h",
+    "name": "Phantom",
+    "iconURL": "https://coin-tracker-public.s3.us-west-1.amazonaws.com/crypto-icons/icons/phantom_new.svg"
+  },
+  {
+    "id": "cc88f2e0-a925-446d-a7f9-5ab9ce89b471",
+    "address": "34xp4vRoCGJym3xR7yCVPFHoCNxv4Twseo",
+    "name": "Phantom",
+    "iconURL": ""
+  }
+]

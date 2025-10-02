@@ -1,0 +1,233 @@
+[
+  {
+    "id": "90b4edf1-0a7a-4d7a-a330-0d4009d66139",
+    "walletId": "2e5e6892-821a-4d18-9b37-d17e8385092b",
+    "date": "2025-10-02T10:54:53.945Z",
+    "balance": 2.27316639,
+    "confirmations": 4
+  },
+  {
+    "id": "c9569e83-7a3f-489a-be9a-c5ec7742e861",
+    "walletId": "2e5e6892-821a-4d18-9b37-d17e8385092b",
+    "date": "2025-10-01T01:10:40.309Z",
+    "balance": 1.22437388,
+    "confirmations": 2
+  },
+  {
+    "id": "6071cb0f-7550-4c2b-b6f4-71778870985e",
+    "walletId": "5455bc71-32f0-4c61-b025-d1daad1286e5",
+    "date": "2025-10-02T05:40:03.436Z",
+    "balance": -0.01,
+    "confirmations": 2
+  },
+  {
+    "id": "0271b7c1-dfd5-4fa8-a7f1-82ac79ed92fd",
+    "walletId": "5455bc71-32f0-4c61-b025-d1daad1286e5",
+    "date": "2025-10-01T03:22:21.978Z",
+    "balance": 1.40019665,
+    "confirmations": 2
+  },
+  {
+    "id": "d3339055-60cf-463c-a2bb-ce6f2fe437bb",
+    "walletId": "c0800fe8-5171-4fda-9dee-4dce9bd781e1",
+    "date": "2025-10-02T18:41:27.857Z",
+    "balance": 1.98303984,
+    "confirmations": 3
+  },
+  {
+    "id": "2e6514b9-d29d-4dfa-82d0-ba2a1aa1122b",
+    "walletId": "c0800fe8-5171-4fda-9dee-4dce9bd781e1",
+    "date": "2025-10-02T17:08:43.882Z",
+    "balance": 2.31288963,
+    "confirmations": 3
+  },
+  {
+    "id": "621950e1-fa5d-4cef-a94a-e853fa19ca16",
+    "walletId": "c0800fe8-5171-4fda-9dee-4dce9bd781e1",
+    "date": "2025-10-01T16:01:56.607Z",
+    "balance": 0.93680056,
+    "confirmations": 6
+  },
+  {
+    "id": "970f8993-77af-4fd5-8b59-e2e996e2155b",
+    "walletId": "c0800fe8-5171-4fda-9dee-4dce9bd781e1",
+    "date": "2025-10-02T03:19:27.085Z",
+    "balance": 1.8615851,
+    "confirmations": 1
+  },
+  {
+    "id": "4d5bc53b-fb6e-4f59-ab44-7cadcc68671f",
+    "walletId": "c0800fe8-5171-4fda-9dee-4dce9bd781e1",
+    "date": "2025-10-01T07:43:36.716Z",
+    "balance": 0.86949519,
+    "confirmations": 2
+  },
+  {
+    "id": "7953b78a-b028-4f2e-83f8-522553bc2bc1",
+    "walletId": "c0800fe8-5171-4fda-9dee-4dce9bd781e1",
+    "date": "2025-09-30T02:36:55.934Z",
+    "balance": -0.20654477,
+    "confirmations": 5
+  },
+  {
+    "id": "baa69f40-88ed-4ace-ac36-50666d995f9e",
+    "walletId": "c0800fe8-5171-4fda-9dee-4dce9bd781e1",
+    "date": "2025-10-02T19:17:57.953Z",
+    "balance": -0.22624048,
+    "confirmations": 4
+  },
+  {
+    "id": "794a35cd-f347-4a81-b152-a5d1408a3f5a",
+    "walletId": "c0800fe8-5171-4fda-9dee-4dce9bd781e1",
+    "date": "2025-10-01T19:04:35.120Z",
+    "balance": 2.05773742,
+    "confirmations": 2
+  },
+  {
+    "id": "68589bec-fabd-40dd-8dc0-6871ee554285",
+    "walletId": "c0800fe8-5171-4fda-9dee-4dce9bd781e1",
+    "date": "2025-09-29T22:33:43.651Z",
+    "balance": 0.44240718,
+    "confirmations": 6
+  },
+  {
+    "id": "e857351b-ac31-45a7-a65b-b010cf8750b9",
+    "walletId": "c0800fe8-5171-4fda-9dee-4dce9bd781e1",
+    "date": "2025-10-01T21:45:07.483Z",
+    "balance": 0.90736899,
+    "confirmations": 3
+  },
+  {
+    "id": "dce05187-c0b9-4e06-8218-ffa090673ed5",
+    "walletId": "c0800fe8-5171-4fda-9dee-4dce9bd781e1",
+    "date": "2025-10-01T01:20:57.328Z",
+    "balance": 1.01416909,
+    "confirmations": 1
+  },
+  {
+    "id": "288490ff-bf3f-4963-af25-889ed4e9d5ce",
+    "walletId": "2e5e6892-821a-4d18-9b37-d17e8385092b",
+    "date": "2025-10-01T20:54:07.744Z",
+    "balance": -0.04418403,
+    "confirmations": 4
+  },
+  {
+    "id": "42bf75bd-bcc4-4a34-a3c8-80c368589302",
+    "walletId": "2e5e6892-821a-4d18-9b37-d17e8385092b",
+    "date": "2025-10-02T19:26:36.968Z",
+    "balance": -0.34304846,
+    "confirmations": 1
+  },
+  {
+    "id": "d56684d1-ec85-41ab-a6cf-6cda4483ac55",
+    "walletId": "c0800fe8-5171-4fda-9dee-4dce9bd781e1",
+    "date": "2025-10-02T16:32:46.207Z",
+    "balance": 0.62216258,
+    "confirmations": 4
+  },
+  {
+    "id": "5a0e1cd7-c58d-4d27-983d-6c19d6b4cedc",
+    "walletId": "c0800fe8-5171-4fda-9dee-4dce9bd781e1",
+    "date": "2025-10-01T05:28:24.001Z",
+    "balance": 0.248224,
+    "confirmations": 5
+  },
+  {
+    "id": "017e5c05-188e-4428-8b49-9a16827ca735",
+    "walletId": "c0800fe8-5171-4fda-9dee-4dce9bd781e1",
+    "date": "2025-09-29T23:58:48.719Z",
+    "balance": 2.26589866,
+    "confirmations": 4
+  },
+  {
+    "id": "36ed2d1e-b4e7-4b38-bb01-f8f0e419bb73",
+    "walletId": "2e5e6892-821a-4d18-9b37-d17e8385092b",
+    "date": "2025-10-02T17:33:32.540Z",
+    "balance": 2.25939427,
+    "confirmations": 6
+  },
+  {
+    "id": "2ba48ce6-bea0-469d-8922-cc3c789e4280",
+    "walletId": "2e5e6892-821a-4d18-9b37-d17e8385092b",
+    "date": "2025-10-01T01:17:58.231Z",
+    "balance": 0.68538131,
+    "confirmations": 2
+  },
+  {
+    "id": "a1ee2a10-4c03-47ec-9506-a59ebaf92a2e",
+    "walletId": "2e5e6892-821a-4d18-9b37-d17e8385092b",
+    "date": "2025-09-30T13:11:52.775Z",
+    "balance": -0.20910454,
+    "confirmations": 6
+  },
+  {
+    "id": "ef316e60-9953-4279-8464-622af502620e",
+    "walletId": "5455bc71-32f0-4c61-b025-d1daad1286e5",
+    "date": "2025-10-02T15:13:29.408Z",
+    "balance": 2.02908364,
+    "confirmations": 5
+  },
+  {
+    "id": "2fd17a2d-0ed5-4e70-92ca-6617d4daa1e7",
+    "walletId": "5455bc71-32f0-4c61-b025-d1daad1286e5",
+    "date": "2025-10-02T02:39:15.786Z",
+    "balance": -0.31222617,
+    "confirmations": 5
+  },
+  {
+    "id": "f04e4d84-ce1e-4658-910e-af617688c26b",
+    "walletId": "5455bc71-32f0-4c61-b025-d1daad1286e5",
+    "date": "2025-10-01T06:16:30.728Z",
+    "balance": -0.23895503,
+    "confirmations": 1
+  },
+  {
+    "id": "1ea580dc-9883-45ee-b311-bbadb9a9d38c",
+    "walletId": "cc88f2e0-a925-446d-a7f9-5ab9ce89b471",
+    "date": "2025-10-02T16:52:31.906Z",
+    "balance": 0.45399423,
+    "confirmations": 3
+  },
+  {
+    "id": "29768351-68f2-4df0-93a9-7c23ac864d29",
+    "walletId": "cc88f2e0-a925-446d-a7f9-5ab9ce89b471",
+    "date": "2025-10-02T07:35:32.408Z",
+    "balance": 0.53047908,
+    "confirmations": 6
+  },
+  {
+    "id": "2674e2d7-5333-4146-8c53-91e5d1cc9e3e",
+    "walletId": "cc88f2e0-a925-446d-a7f9-5ab9ce89b471",
+    "date": "2025-10-01T03:14:38.168Z",
+    "balance": 0.87130245,
+    "confirmations": 3
+  },
+  {
+    "id": "d21cd862-cae5-434d-9ffb-d5f18eede598",
+    "walletId": "cc88f2e0-a925-446d-a7f9-5ab9ce89b471",
+    "date": "2025-09-30T07:24:45.140Z",
+    "balance": -0.25092694,
+    "confirmations": 1
+  },
+  {
+    "id": "d48f390d-f266-41c9-bf8b-42851e404a9f",
+    "walletId": "cc88f2e0-a925-446d-a7f9-5ab9ce89b471",
+    "date": "2025-10-02T18:38:50.549Z",
+    "balance": -0.03516494,
+    "confirmations": 1
+  },
+  {
+    "id": "3f7ddf49-c76b-4326-a44c-bad3288a7711",
+    "walletId": "cc88f2e0-a925-446d-a7f9-5ab9ce89b471",
+    "date": "2025-10-01T13:20:44.408Z",
+    "balance": -0.44810239,
+    "confirmations": 2
+  },
+  {
+    "id": "da51bb72-3670-40bc-854c-99d1dca4f141",
+    "walletId": "cc88f2e0-a925-446d-a7f9-5ab9ce89b471",
+    "date": "2025-09-30T01:27:54.854Z",
+    "balance": 1.72413401,
+    "confirmations": 1
+  }
+]
