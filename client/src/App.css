@@ -1,42 +1,38 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+/* CoinTracker App Styles */
+
+/* Layout Components */
+.app-container {
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--bg-app);
+  padding: 30px;
+  gap: 24px; /* gap: space-24: 24px between sidebar and main content */
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+/* Main Content Area */
+.main-content {
+  flex: 1;
+  padding: 9px; /* space-9: 9px */
+  border-radius: 42px; /* border-radius: 42px */
+  border: 1px solid #F7F7FF; /* border: 1px border-color: #F7F7FF */
+  background: white; /* background: white */
+  box-shadow: 0px 4px 12px 0px rgba(0, 0, 0, 0.04); /* box-shadow: 0px 4px 12px 0px rgba(0, 0, 0, 0.04) */
+  height: calc(100vh - 60px); /* Full viewport height minus app-container padding */
+  display: flex;
+  flex-direction: column;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
+
+
+
+
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .app-container {
+    flex-direction: column;
+    padding: 20px 16px; /* Maintain some top/bottom padding on mobile */
+    gap: 16px;
   }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
+  
 }
