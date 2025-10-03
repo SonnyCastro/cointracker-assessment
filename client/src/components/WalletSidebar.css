@@ -57,6 +57,10 @@
   height: 100%;
   object-fit: cover;
   border-radius: 50%;
+  /* Prevent flash during icon reload */
+  image-rendering: -webkit-optimize-contrast;
+  backface-visibility: hidden;
+  transform: translateZ(0);
 }
 
 .wallet-icon.coinbase {
@@ -109,6 +113,8 @@
   gap: 8px;
   flex-shrink: 0;
   margin-left: auto;
+  /* Ensure stable width to prevent layout shift */
+  min-width: 32px;
 }
 
 .wallet-sync-icon {

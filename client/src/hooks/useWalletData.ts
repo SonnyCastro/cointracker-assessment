@@ -1,19 +1,49 @@
-import { useWallets } from './useWallets'
-import { useWalletTransactions } from './useWalletTransactions'
-import { useAppContext } from '../contexts/AppContext'
-import { useMemo } from 'react'
+import { useWallets } from './useWallets';
+import { useWalletTransactions } from './useWalletTransactions';
+import { useAppContext } from '../contexts/AppContext';
+import { useMemo } from 'react';
+import type { Wallet, Transaction, BitcoinAddress, WalletId } from '../types';
 
 /**
  * Unified hook that combines wallet and transaction data
  * Eliminates the need to manage separate hooks in components
  */
-export const useWalletData = () => {
-  const { selectedWallet } = useAppContext()
-  const wallets = useWallets()
-  const transactions = useWalletTransactions(selectedWallet)
+interface UseWalletDataReturn {
+  // Wallet data
+  wallets: Wallet[];
+  walletsLoading: boolean;
+  walletsError: string | null;
+  walletsRetryCount: number;
+  walletsIsRetrying: boolean;
+
+  // Transaction data
+  transactions: Transaction[];
+  transactionsLoading: boolean;
+  transactionsError: string | null;
+  transactionsRetryCount: number;
+  transactionsIsRetrying: boolean;
+
+  // Combined loading state
+  isLoading: boolean;
+
+  // Combined error state
+  hasError: boolean;
+
+  // Actions
+  createWallet: (address: BitcoinAddress) => Promise<string | null>;
+  deleteWallet: (walletId: WalletId) => Promise<boolean>;
+  syncWallet: (walletId: WalletId) => Promise<{ transactions: Transaction[], updatedWallets?: Wallet[] }>;
+  refetchWallets: () => Promise<void>;
+  refetchTransactions: () => Promise<void>;
+}
+
+export const useWalletData = (): UseWalletDataReturn => {
+  const { selectedWallet } = useAppContext();
+  const wallets = useWallets();
+  const transactions = useWalletTransactions(selectedWallet);
 
   // Memoize combined state to prevent unnecessary re-renders
-  const combinedState = useMemo(() => ({
+  const combinedState = useMemo((): UseWalletDataReturn => ({
     // Wallet data
     wallets: wallets.wallets,
     walletsLoading: wallets.loading,
@@ -56,7 +86,7 @@ export const useWalletData = () => {
     transactions.retryCount,
     transactions.isRetrying,
     transactions.refetch
-  ])
+  ]);
 
-  return combinedState
-}
+  return combinedState;
+};
