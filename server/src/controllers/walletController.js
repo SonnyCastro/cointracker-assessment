@@ -1,6 +1,7 @@
 const crypto = require('crypto');
 const { faker } = require('@faker-js/faker');
 const databaseService = require('../services/databaseService');
+const { SAMPLE_WALLETS } = require('../utils/constants');
 
 class WalletController {
   // GET /wallets - returns a list of available wallets
@@ -85,6 +86,14 @@ class WalletController {
         return res.status(404).json({ error: 'Wallet not found' });
       }
 
+      // Update wallet iconURL if it's empty (newly added wallet)
+      if (!wallet.iconURL || wallet.iconURL === '') {
+        const sampleWallet = SAMPLE_WALLETS.find(sw => sw.name === wallet.name);
+        if (sampleWallet) {
+          wallet.iconURL = sampleWallet.iconURL;
+        }
+      }
+
       // Generate 1-3 new transactions
       const numNewTx = Math.floor(Math.random() * 3) + 1;
       const now = new Date();
@@ -115,7 +124,8 @@ class WalletController {
         };
       });
 
-      // Save new transactions
+      // Save updated wallets (with iconURL) and new transactions
+      await databaseService.writeWallets(wallets);
       const updatedTransactions = [...transactions, ...newTransactions];
       await databaseService.writeTransactions(updatedTransactions);
 

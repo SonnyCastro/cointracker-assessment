@@ -1,13 +1,28 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, memo, useCallback, useMemo } from 'react'
 import { CopyIcon, PencilSimpleIcon, ArrowsClockwiseIcon } from '@phosphor-icons/react'
-import { useWalletTransactions } from '../hooks/useWalletTransactions'
 import { formatWalletAddress, getWalletProvider, getWalletIcon, getWalletProviderAlt } from '../utils/walletUtils'
+import { useAppContext } from '../contexts/AppContext'
 import './WalletOverview.css'
 
-const WalletOverview = ({ selectedWallet, wallets, onEditModeChange, isEditMode, syncWallet }) => {
+const WalletOverview = () => {
+  const {
+    selectedWallet,
+    wallets,
+    setEditMode,
+    isEditMode,
+    syncWallet,
+    transactions,
+    transactionsLoading,
+    transactionsError,
+    transactionsRetryCount,
+    transactionsIsRetrying,
+    refetchTransactions
+  } = useAppContext()
+  
   const [wallet, setWallet] = useState(null)
   const [isSyncing, setIsSyncing] = useState(false)
-  const { transactions, loading: transactionsLoading, error: transactionsError, retryCount, isRetrying, refetch: refetchTransactions } = useWalletTransactions(selectedWallet)
+  const [isCopied, setIsCopied] = useState(false)
+
 
 
   useEffect(() => {
@@ -29,7 +44,8 @@ const WalletOverview = ({ selectedWallet, wallets, onEditModeChange, isEditMode,
     }
   }, [selectedWallet, wallets])
 
-  const calculateBalance = () => {
+  // Memoize balance calculation to prevent unnecessary recalculations
+  const balanceData = useMemo(() => {
     if (!transactions || transactions.length === 0) return { balance: 0, isNormalized: false }
     
     const netPosition = transactions.reduce((total, tx) => total + tx.balance, 0)
@@ -44,44 +60,88 @@ const WalletOverview = ({ selectedWallet, wallets, onEditModeChange, isEditMode,
       isNormalized: isNegative,
       originalBalance: netPosition
     }
-  }
+  }, [transactions])
 
-  const formatTransactionAmount = (balance) => {
+  // Memoize utility functions
+  const formatTransactionAmount = useCallback((balance) => {
     const amount = Math.abs(balance)
     const sign = balance >= 0 ? '+' : '-'
     return `${sign}${amount.toFixed(2)} BTC`
-  }
+  }, [])
 
-  const formatDate = (dateString) => {
+  const formatDate = useCallback((dateString) => {
     return new Date(dateString).toISOString().split('T')[0]
-  }
+  }, [])
 
-  const handleCopyAddress = () => {
+  const handleCopyAddress = useCallback(async () => {
     if (wallet?.address) {
-      navigator.clipboard.writeText(wallet.address)
+      try {
+        await navigator.clipboard.writeText(wallet.address)
+        setIsCopied(true)
+        
+        // Add haptic feedback if supported
+        if (navigator.vibrate) {
+          navigator.vibrate(50) // Short vibration
+        }
+        
+        // Reset the copied state after 2 seconds
+        setTimeout(() => {
+          setIsCopied(false)
+        }, 2000)
+      } catch (error) {
+        console.error('Failed to copy address:', error)
+        // Fallback for older browsers
+        const textArea = document.createElement('textarea')
+        textArea.value = wallet.address
+        document.body.appendChild(textArea)
+        textArea.select()
+        document.execCommand('copy')
+        document.body.removeChild(textArea)
+        
+        setIsCopied(true)
+        
+        // Add haptic feedback if supported
+        if (navigator.vibrate) {
+          navigator.vibrate(50) // Short vibration
+        }
+        
+        setTimeout(() => {
+          setIsCopied(false)
+        }, 2000)
+      }
     }
-  }
+  }, [wallet?.address])
 
-  const handleSync = async () => {
+  const handleSync = useCallback(async () => {
     if (!selectedWallet || !syncWallet || isSyncing) return
     
     try {
       setIsSyncing(true)
+      
+      // Add minimum loading duration for better UX
+      const minLoadingTime = 1000 // 1 second minimum
+      const startTime = Date.now()
+      
       await syncWallet(selectedWallet)
       refetchTransactions()
+      
+      // Ensure minimum loading time for smooth animation
+      const elapsedTime = Date.now() - startTime
+      const remainingTime = Math.max(0, minLoadingTime - elapsedTime)
+      
+      if (remainingTime > 0) {
+        await new Promise(resolve => setTimeout(resolve, remainingTime))
+      }
     } catch (error) {
       // Error handling is done in the useWallets hook
     } finally {
       setIsSyncing(false)
     }
-  }
+  }, [selectedWallet, syncWallet, isSyncing, refetchTransactions])
 
-  const handleEditToggle = () => {
-    const newEditMode = !isEditMode
-    if (onEditModeChange) {
-      onEditModeChange(newEditMode)
-    }
-  }
+  const handleEditToggle = useCallback(() => {
+    setEditMode(!isEditMode)
+  }, [isEditMode, setEditMode])
 
 
   if (!wallet) {
@@ -95,7 +155,6 @@ const WalletOverview = ({ selectedWallet, wallets, onEditModeChange, isEditMode,
     )
   }
 
-  const balanceData = calculateBalance()
 
   return (
     <div className="wallet-overview">
@@ -104,7 +163,19 @@ const WalletOverview = ({ selectedWallet, wallets, onEditModeChange, isEditMode,
         <div className="wallet-title-section">
           <h1 className="wallet-title">
             {wallet.name} <span className="wallet-title-address">{formatWalletAddress(wallet.address)}</span>
-            <CopyIcon size={16} className="copy-icon" onClick={handleCopyAddress} />
+            <div className="copy-container">
+              <CopyIcon 
+                size={20} 
+                className={`copy-icon ${isCopied ? 'copied' : ''}`} 
+                onClick={handleCopyAddress}
+                title={isCopied ? 'Copied!' : 'Copy address'}
+              />
+              {isCopied && (
+                <div className="copy-tooltip">
+                  Copied!
+                </div>
+              )}
+            </div>
           </h1>
         </div>
         
@@ -145,17 +216,17 @@ const WalletOverview = ({ selectedWallet, wallets, onEditModeChange, isEditMode,
               <div className="error-icon">⚠️</div>
               <h3>Error loading transactions</h3>
               <p>{transactionsError}</p>
-              {isRetrying && (
+              {transactionsIsRetrying && (
                 <div className="retry-info">
-                  Retrying in {Math.ceil(Math.min(1000 * Math.pow(2, retryCount), 5000) / 1000)} seconds... (Attempt {retryCount + 1}/5)
+                  Retrying in {Math.ceil(Math.min(1000 * Math.pow(2, transactionsRetryCount), 5000) / 1000)} seconds... (Attempt {transactionsRetryCount + 1}/5)
                 </div>
               )}
-              {retryCount >= 5 && (
+              {transactionsRetryCount >= 5 && (
                 <div className="retry-info">
                   Max retry attempts reached. Please check your connection.
                 </div>
               )}
-              {!isRetrying && retryCount < 5 && (
+              {!transactionsIsRetrying && transactionsRetryCount < 5 && (
                 <button onClick={refetchTransactions} className="retry-button">
                   Try Again Now
                 </button>
@@ -190,5 +261,8 @@ const WalletOverview = ({ selectedWallet, wallets, onEditModeChange, isEditMode,
   )
 }
 
-export default WalletOverview
+// Memoize the component to prevent unnecessary re-renders
+const WalletOverviewMemo = memo(WalletOverview)
+
+export default WalletOverviewMemo
 

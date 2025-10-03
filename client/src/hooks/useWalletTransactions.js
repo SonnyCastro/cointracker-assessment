@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { walletService } from '../services/walletService'
+import { useRetry } from './useRetry'
 
 /**
  * Custom hook for managing wallet transaction data
@@ -9,8 +10,7 @@ export const useWalletTransactions = (walletId) => {
   const [transactions, setTransactions] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
-  const [retryCount, setRetryCount] = useState(0)
-  const [isRetrying, setIsRetrying] = useState(false)
+  const { retryCount, isRetrying, retryWithBackoff, resetRetryCount, cleanup } = useRetry()
 
   /**
    * Fetch transactions for a specific wallet
@@ -19,7 +19,7 @@ export const useWalletTransactions = (walletId) => {
     if (!walletId) {
       setTransactions([])
       setError(null)
-      setRetryCount(0)
+      resetRetryCount()
       return
     }
 
@@ -27,9 +27,16 @@ export const useWalletTransactions = (walletId) => {
       setLoading(true)
       setError(null)
       const transactionsData = await walletService.getWalletTransactions(walletId)
+
       // Handle case where wallet has no transactions (empty array or null)
-      setTransactions(transactionsData || [])
-      setRetryCount(0) // Reset retry count on success
+      const newTransactions = transactionsData || []
+
+      // Use functional update to ensure React detects the change
+      setTransactions(prevTransactions => {
+        return newTransactions
+      })
+
+      resetRetryCount() // Reset retry count on success
     } catch (err) {
       // If it's a 404 or "no transactions" error, treat as empty transactions
       if (err.message.includes('404') || err.message.includes('not found') || err.message.includes('no transactions')) {
@@ -41,23 +48,14 @@ export const useWalletTransactions = (walletId) => {
     } finally {
       setLoading(false)
     }
-  }, [walletId])
+  }, [walletId, resetRetryCount])
 
   /**
    * Automatic retry with exponential backoff
    */
-  const retryWithBackoff = useCallback(async () => {
-    if (retryCount >= 5) return // Max 5 retries
-
-    setIsRetrying(true)
-    const delay = Math.min(1000 * Math.pow(2, retryCount), 5000) // Max 5 seconds
-
-    setTimeout(async () => {
-      setRetryCount(prev => prev + 1)
-      await fetchTransactions()
-      setIsRetrying(false)
-    }, delay)
-  }, [retryCount, fetchTransactions])
+  const handleRetry = useCallback(async () => {
+    await retryWithBackoff(fetchTransactions)
+  }, [retryWithBackoff, fetchTransactions])
 
   // Fetch transactions when walletId changes
   useEffect(() => {
@@ -67,9 +65,14 @@ export const useWalletTransactions = (walletId) => {
   // Auto-retry on error (but not for "no transactions" scenarios)
   useEffect(() => {
     if (error && retryCount < 5 && !error.includes('404') && !error.includes('not found') && !error.includes('no transactions')) {
-      retryWithBackoff()
+      handleRetry()
     }
-  }, [error, retryCount, retryWithBackoff])
+  }, [error, retryCount, handleRetry])
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return cleanup
+  }, [cleanup])
 
   return {
     transactions,

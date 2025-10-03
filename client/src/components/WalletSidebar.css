@@ -120,11 +120,14 @@
   border-radius: 50%;
   color: #40774B;
   cursor: pointer;
-  transition: all var(--transition-fast);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 0.8;
 }
 
 .wallet-sync-icon:hover {
   transform: scale(1.1);
+  opacity: 1;
+  background-color: rgba(64, 119, 75, 0.1);
 }
 
 .wallet-sync-icon:active {
@@ -133,11 +136,15 @@
 
 .wallet-sync-icon.syncing {
   cursor: not-allowed;
-  animation: spin 2s linear infinite;
+  animation: spin 1.5s linear infinite, pulse 2s ease-in-out infinite;
+  opacity: 1;
+  background-color: rgba(64, 119, 75, 0.15);
+  color: #2d5a33;
 }
 
 .wallet-sync-icon.syncing:hover {
   transform: none;
+  background-color: rgba(64, 119, 75, 0.15);
 }
 
 .wallet-sync-icon.error {
@@ -156,6 +163,17 @@
   }
   to {
     transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(0.95);
   }
 }
 

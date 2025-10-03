@@ -1,25 +1,27 @@
-import { useState, useMemo, useEffect, useRef } from 'react'
+import { useState, useMemo, useEffect, useRef, memo, useCallback } from 'react'
 import { PlusIcon, ArrowsClockwiseIcon, TrashIcon } from '@phosphor-icons/react'
 import { formatWalletAddress, getWalletProvider, getWalletIcon, getWalletProviderAlt, isValidBitcoinAddress } from '../utils/walletUtils'
+import { useAppContext } from '../contexts/AppContext'
 import addWalletIcon from '../assets/addWallet.png'
 import './WalletSidebar.css'
 
-const WalletSidebar = ({ 
-  selectedWallet, 
-  onWalletSelect, 
-  isEditMode, 
-  onEditModeChange,
-  wallets,
-  loading,
-  error,
-  retryCount,
-  isRetrying,
-  refetch,
-  createWallet,
-  deleteWallet,
-  syncWallet,
-  refetchTransactions
-}) => {
+const WalletSidebar = () => {
+  const {
+    selectedWallet,
+    setSelectedWallet,
+    isEditMode,
+    setEditMode,
+    wallets,
+    walletsLoading,
+    walletsError,
+    walletsRetryCount,
+    walletsIsRetrying,
+    refetchWallets,
+    createWallet,
+    deleteWallet,
+    syncWallet,
+    refetchTransactions
+  } = useAppContext()
   
   const [showAddForm, setShowAddForm] = useState(false)
   const [newWalletAddress, setNewWalletAddress] = useState('')
@@ -33,13 +35,13 @@ const WalletSidebar = ({
     if (pendingWalletSelection && wallets && wallets.length > 0) {
       const walletExists = wallets.some(w => w.id === pendingWalletSelection)
       if (walletExists) {
-        onWalletSelect(pendingWalletSelection)
+        setSelectedWallet(pendingWalletSelection)
         setPendingWalletSelection(null)
       }
     }
-  }, [wallets, pendingWalletSelection, onWalletSelect])
+  }, [wallets, pendingWalletSelection, setSelectedWallet])
 
-  const handleSubmitWallet = async (e) => {
+  const handleSubmitWallet = useCallback(async (e) => {
     e.preventDefault()
     
     if (!newWalletAddress.trim() || !isValidBitcoinAddress(newWalletAddress.trim())) {
@@ -55,6 +57,7 @@ const WalletSidebar = ({
       setNewWalletAddress('')
       setShowAddForm(false)
       setFormError(null)
+      
       if (newWalletId) {
         setPendingWalletSelection(newWalletId)
       }
@@ -69,52 +72,65 @@ const WalletSidebar = ({
     } finally {
       setIsSubmitting(false)
     }
-  }
+  }, [newWalletAddress, createWallet])
 
-  const handleCancel = () => {
+  const handleCancel = useCallback(() => {
     setNewWalletAddress('')
     setShowAddForm(false)
     setFormError(null)
-  }
+  }, [])
 
-  const handleDeleteWallet = async (walletId) => {
+  const handleDeleteWallet = useCallback(async (walletId) => {
     if (window.confirm('Are you sure you want to delete this wallet? This action cannot be undone.')) {
       try {
         await deleteWallet(walletId)
         
-        if (onEditModeChange) {
-          onEditModeChange(false)
-        }
+        setEditMode(false)
         
         if (selectedWallet === walletId) {
           const remainingWallets = wallets.filter(w => w.id !== walletId)
           if (remainingWallets.length > 0) {
-            onWalletSelect(remainingWallets[0].id)
+            setSelectedWallet(remainingWallets[0].id)
           }
         }
       } catch (error) {
         alert(`Failed to delete wallet: ${error.message || 'Unknown error occurred'}`)
       }
     }
-  }
+  }, [deleteWallet, setEditMode, selectedWallet, wallets, setSelectedWallet])
 
-  const handleAddWalletClick = () => {
+  const handleAddWalletClick = useCallback(() => {
     setShowAddForm(true)
     setFormError(null)
-  }
+  }, [])
 
 
-  const handleSyncWallet = async (walletId) => {
+  const handleSyncWallet = useCallback(async (walletId) => {
     try {
       setSyncingWallets(prev => new Set(prev).add(walletId))
+      
+      // Add minimum loading duration for better UX
+      const minLoadingTime = 1000 // 1 second minimum
+      const startTime = Date.now()
+      
       await syncWallet(walletId)
+      
       // Refetch wallets to get updated data, which will trigger re-renders
-      if (refetch) {
-        refetch()
+      if (refetchWallets) {
+        await refetchWallets()
       }
+      
       // If this is the currently selected wallet, also refetch its transactions
       if (refetchTransactions && selectedWallet === walletId) {
-        refetchTransactions()
+        await refetchTransactions()
+      }
+      
+      // Ensure minimum loading time for smooth animation
+      const elapsedTime = Date.now() - startTime
+      const remainingTime = Math.max(0, minLoadingTime - elapsedTime)
+      
+      if (remainingTime > 0) {
+        await new Promise(resolve => setTimeout(resolve, remainingTime))
       }
     } catch (error) {
       // Error handling is done in the useWallets hook
@@ -125,7 +141,7 @@ const WalletSidebar = ({
         return newSet
       })
     }
-  }
+  }, [syncWallet, refetchWallets, refetchTransactions, selectedWallet])
 
   const isAddedWallet = (wallet) => {
     // Check if this is a newly added wallet (not from original server data)
@@ -133,10 +149,11 @@ const WalletSidebar = ({
     return !wallet.iconURL || wallet.iconURL === ""
   }
 
+  // Memoize wallet transformation - only recalculate when wallets change
   const transformedWallets = useMemo(() => {
     return wallets.map(wallet => {
       const provider = getWalletProvider(wallet.name, wallet.address)
-      const transformed = {
+      return {
         id: wallet.id,
         name: provider,
         address: formatWalletAddress(wallet.address),
@@ -145,11 +162,10 @@ const WalletSidebar = ({
         alt: getWalletProviderAlt(provider),
         isActive: selectedWallet === wallet.id
       }
-      return transformed
     })
   }, [wallets, selectedWallet])
 
-  if (loading) {
+  if (walletsLoading) {
     return (
       <div className="wallet-sidebar-card">
         <div className="loading-state">
@@ -160,8 +176,8 @@ const WalletSidebar = ({
     )
   }
 
-  if (error) {
-    const retryDelay = Math.min(1000 * Math.pow(2, retryCount), 5000)
+  if (walletsError) {
+    const retryDelay = Math.min(1000 * Math.pow(2, walletsRetryCount), 5000)
     const retryInSeconds = Math.ceil(retryDelay / 1000)
     
     return (
@@ -169,19 +185,19 @@ const WalletSidebar = ({
         <div className="error-content">
           <div className="error-icon">⚠️</div>
           <h3>Error loading wallets</h3>
-          <p>{error}</p>
-          {isRetrying && (
+          <p>{walletsError}</p>
+          {walletsIsRetrying && (
             <div className="retry-info">
-              Retrying in {retryInSeconds} seconds... (Attempt {retryCount + 1}/5)
+              Retrying in {retryInSeconds} seconds... (Attempt {walletsRetryCount + 1}/5)
             </div>
           )}
-          {retryCount >= 5 && (
+          {walletsRetryCount >= 5 && (
             <div className="retry-info">
               Max retry attempts reached. Please check your connection.
             </div>
           )}
-          {!isRetrying && retryCount < 5 && (
-            <button onClick={refetch} className="retry-button">
+          {!walletsIsRetrying && walletsRetryCount < 5 && (
+            <button onClick={refetchWallets} className="retry-button">
               Try Again Now
             </button>
           )}
@@ -196,13 +212,12 @@ const WalletSidebar = ({
         {transformedWallets.map((wallet) => {
           const originalWallet = wallets.find(w => w.id === wallet.id)
           const showSyncIcon = isAddedWallet(originalWallet)
-          
 
           return (
             <div
               key={wallet.id}
               className={`wallet-item ${wallet.isActive ? 'active' : ''}`}
-              onClick={() => onWalletSelect(wallet.id)}
+              onClick={() => setSelectedWallet(wallet.id)}
             >
               <div className="wallet-icon">
                 <img src={wallet.iconURL} alt={wallet.alt} />
@@ -302,4 +317,7 @@ const WalletSidebar = ({
   )
 }
 
-export default WalletSidebar
+// Memoize the component to prevent unnecessary re-renders
+const WalletSidebarMemo = memo(WalletSidebar)
+
+export default WalletSidebarMemo

@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { walletService } from '../services/walletService'
+import { useRetry } from './useRetry'
 
 /**
  * Custom hook for managing wallet data
@@ -9,8 +10,7 @@ export const useWallets = () => {
   const [wallets, setWallets] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  const [retryCount, setRetryCount] = useState(0)
-  const [isRetrying, setIsRetrying] = useState(false)
+  const { retryCount, isRetrying, retryWithBackoff, resetRetryCount, cleanup } = useRetry()
 
   /**
    * Fetch all wallets from the server
@@ -21,29 +21,20 @@ export const useWallets = () => {
       setError(null)
       const walletsData = await walletService.getAllWallets()
       setWallets(walletsData)
-      setRetryCount(0) // Reset retry count on success
+      resetRetryCount() // Reset retry count on success
     } catch (err) {
       setError(err.message)
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [resetRetryCount])
 
   /**
    * Automatic retry with exponential backoff
    */
-  const retryWithBackoff = useCallback(async () => {
-    if (retryCount >= 5) return // Max 5 retries
-
-    setIsRetrying(true)
-    const delay = Math.min(1000 * Math.pow(2, retryCount), 5000) // Max 5 seconds
-
-    setTimeout(async () => {
-      setRetryCount(prev => prev + 1)
-      await fetchWallets()
-      setIsRetrying(false)
-    }, delay)
-  }, [retryCount, fetchWallets])
+  const handleRetry = useCallback(async () => {
+    await retryWithBackoff(fetchWallets)
+  }, [retryWithBackoff, fetchWallets])
 
   /**
    * Create a new wallet
@@ -100,9 +91,14 @@ export const useWallets = () => {
   // Auto-retry on error
   useEffect(() => {
     if (error && retryCount < 5) {
-      retryWithBackoff()
+      handleRetry()
     }
-  }, [error, retryCount, retryWithBackoff])
+  }, [error, retryCount, handleRetry])
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return cleanup
+  }, [cleanup])
 
   return {
     wallets,

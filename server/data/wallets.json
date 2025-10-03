@@ -18,9 +18,9 @@
     "iconURL": "https://coin-tracker-public.s3.us-west-1.amazonaws.com/crypto-icons/icons/phantom_new.svg"
   },
   {
-    "id": "cc88f2e0-a925-446d-a7f9-5ab9ce89b471",
+    "id": "378e15c4-6d03-43a0-8365-5df1376d93f5",
     "address": "34xp4vRoCGJym3xR7yCVPFHoCNxv4Twseo",
-    "name": "Phantom",
-    "iconURL": ""
+    "name": "Kraken",
+    "iconURL": "https://coin-tracker-public.s3.us-west-1.amazonaws.com/crypto-icons/icons/kraken.svg"
   }
 ]
