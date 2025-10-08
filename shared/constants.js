@@ -32,8 +32,23 @@ export const WALLET_PROVIDERS = {
   PHANTOM: 'Phantom'
 };
 
+// API Base URL configuration
+// In production, use environment variable; in development, use localhost
+const getApiBaseUrl = () => {
+  // Check if we're in a browser environment
+  if (typeof window !== 'undefined') {
+    // In production (not localhost), use environment variable
+    if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+      // Vite injects import.meta.env at build time
+      return import.meta.env?.VITE_API_URL || 'https://cointracker-mock-api.vercel.app';
+    }
+  }
+  // Default to localhost for development
+  return 'http://localhost:3000';
+};
+
 export const DEFAULT_CONFIG = {
-  API_BASE_URL: 'http://localhost:3000',
+  API_BASE_URL: getApiBaseUrl(),
   CLIENT_PORT: 5173,
   SERVER_PORT: 3000
 };
