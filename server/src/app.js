@@ -6,16 +6,30 @@ const app = express();
 
 // Custom CORS middleware
 app.use((req, res, next) => {
-  const allowedOrigins = [
-    'http://localhost:5173', // Vite default dev server
-    'http://localhost:3000', // Alternative dev port
-    'http://127.0.0.1:5173',
-    'http://127.0.0.1:3000',
-    // Production domains - from environment variable
-    process.env.CLIENT_URL, // e.g., https://cointracker-client.vercel.app
-  ].filter(Boolean); // Remove undefined values
+  // Determine allowed origins based on environment
+  const isProduction = process.env.NODE_ENV === 'production';
+  
+  const allowedOrigins = isProduction
+    ? [
+        process.env.CLIENT_URL, // Production client URL only
+      ].filter(Boolean)
+    : [
+        'http://localhost:5173', // Vite default dev server
+        'http://localhost:3000', // Alternative dev port
+        'http://127.0.0.1:5173',
+        'http://127.0.0.1:3000',
+      ];
 
   const origin = req.headers.origin;
+
+  // Debug logging (will show in Vercel logs)
+  console.log('CORS Check:', {
+    environment: process.env.NODE_ENV,
+    origin,
+    allowedOrigins,
+    CLIENT_URL: process.env.CLIENT_URL,
+    isAllowed: allowedOrigins.includes(origin)
+  });
 
   if (allowedOrigins.includes(origin)) {
     res.header('Access-Control-Allow-Origin', origin);
