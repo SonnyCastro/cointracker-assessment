@@ -1,3 +1,6 @@
+// Load environment variables from .env file
+require('dotenv').config();
+
 const app = require('./app');
 const databaseService = require('./services/databaseService');
 const constants = require('./utils/constants');
