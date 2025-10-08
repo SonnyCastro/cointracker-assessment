@@ -4,8 +4,13 @@ const { faker } = require('@faker-js/faker');
 const crypto = require('crypto');
 const constants = require('../utils/constants');
 
-const WALLETS_FILE = path.join(__dirname, '..', '..', 'data', 'wallets.json');
-const TRANSACTIONS_FILE = path.join(__dirname, '..', '..', 'data', 'transactions.json');
+// In production (Vercel), use /tmp directory (writable)
+// In development, use local data directory
+const isProduction = process.env.NODE_ENV === 'production';
+const dataDir = isProduction ? '/tmp' : path.join(__dirname, '..', '..', 'data');
+
+const WALLETS_FILE = path.join(dataDir, 'wallets.json');
+const TRANSACTIONS_FILE = path.join(dataDir, 'transactions.json');
 
 class DatabaseService {
   constructor() {
@@ -27,19 +32,22 @@ class DatabaseService {
 
     try {
       await fs.access(WALLETS_FILE);
-      walletsExist = true;
+      const wallets = await this.readWallets();
+      walletsExist = wallets && wallets.length > 0;
     } catch {
       await fs.writeFile(WALLETS_FILE, JSON.stringify([], null, 2));
     }
 
     try {
       await fs.access(TRANSACTIONS_FILE);
-      transactionsExist = true;
+      const transactions = await this.readTransactions();
+      transactionsExist = transactions && transactions.length > 0;
     } catch {
       await fs.writeFile(TRANSACTIONS_FILE, JSON.stringify([], null, 2));
     }
 
-    // If both files are empty (new initialization), populate with sample data
+    // If files don't exist or are empty, populate with sample data
+    // In production (/tmp), this runs on every cold start
     if (!walletsExist && !transactionsExist) {
       await this.populateSampleData();
     }
