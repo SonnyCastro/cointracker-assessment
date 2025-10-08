@@ -69,3 +69,14 @@ coverage/
 
 # Yarn Integrity file
 .yarn-integrity
+
+# Cursor IDE
+.cursor/
+
+# Deployment documentation
+DEPLOYMENT.md
+DEPLOYMENT_CHECKLIST.md
+QUICK_START_DEPLOYMENT.md
+
+# Vercel
+.vercel
